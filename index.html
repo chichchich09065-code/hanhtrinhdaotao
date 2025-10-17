@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix</title>
+    <title>Drag and Drop Training Matrix - Thu Gọn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,81 +13,152 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            /* --- THAY ĐỔI Ở ĐÂY ĐỂ ĐẶT HÌNH NỀN --- */
-            background-image: url('background-matrix.png'); /* Đặt tên file ảnh của bạn */
-            background-size: cover; /* Đảm bảo ảnh nền phủ toàn bộ */
-            background-position: center; /* Căn giữa ảnh nền */
-            background-repeat: no-repeat; /* Không lặp lại ảnh nền */
-            min-height: 100vh; /* Đảm bảo body đủ cao để thấy ảnh nền */
+            /* Đảm bảo tên file ảnh nền khớp với file bạn đã lưu */
+            background-image: url('background-matrix.png'); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            min-height: 100vh;
             margin: 0;
         }
 
         h1 {
-            color: #333; /* Điều chỉnh màu chữ để dễ nhìn trên nền */
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* Thêm bóng chữ */
+            color: #333; 
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
         }
 
-        /* Điều chỉnh lại màu nền cho các hộp để nó nổi bật trên ảnh nền */
+        /* ------------------------ Khu vực Hộp Kéo (Nhỏ hơn) ------------------------ */
         #draggable-items {
-            background-color: rgba(255, 255, 255, 0.9); /* Nền trắng trong suốt nhẹ */
-            border: 1px solid #ccc;
-            width: 800px;
-            border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px; /* Giảm khoảng cách */
             padding: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 600px; /* Thu nhỏ chiều rộng */
+            border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .draggable-box {
-            background-color: #ff6f61; /* Giữ màu nổi bật */
+            width: 100px; /* Thu nhỏ kích thước hộp */
+            height: 35px; /* Thu nhỏ kích thước hộp */
+            line-height: 35px;
+            text-align: center;
+            background-color: #ff6f61;
             color: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Bóng rõ hơn */
+            border-radius: 4px;
+            cursor: grab;
+            font-size: 13px; /* Thu nhỏ font */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 10;
         }
 
+        /* ------------------------ Khu vực Ma trận 4 ô (Nhỏ hơn) ------------------------ */
         .matrix-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 800px;
-            height: 500px;
-            margin-bottom: 30px;
+            gap: 10px; /* Giảm khoảng cách giữa các ô */
+            width: 600px; /* Thu nhỏ chiều rộng */
+            height: 400px; /* Thu nhỏ chiều cao */
             position: relative;
-            background-color: rgba(255, 255, 255, 0.8); /* Nền trắng trong suốt cho container chính */
-            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .drop-zone {
             border: 2px solid #007bff;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            background-color: rgba(233, 247, 255, 0.7); /* Nền xanh trong suốt nhẹ */
-            min-height: 200px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 6px; /* Giảm bo tròn */
+            padding: 8px; /* Giảm padding */
+            background-color: rgba(233, 247, 255, 0.7);
+            min-height: 180px;
         }
 
         .zone-header {
             background-color: #007bff;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            font-weight: bold;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            padding: 4px 8px;
+            font-size: 14px; /* Thu nhỏ font header */
         }
-
-        /* Điều chỉnh ký hiệu vô cực nếu bạn muốn nó nổi bật hơn trên ảnh nền */
-        .matrix-container > div:last-child { /* Đây là div chứa icon vô cực */
-            color: #0056b3; /* Màu đậm hơn */
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Bóng cho icon */
+        
+        .matrix-container > div:last-child { 
+            color: #0056b3; 
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
         }
     </style>
 </head>
 <body>
+
+    <h1>Kéo Thả Kỹ Năng Vào Lộ Trình Đào Tạo</h1>
+    
+    <div id="draggable-items">
+        <div class="draggable-box" id="skill-1">AI Literacy</div> <div class="draggable-box" id="skill-2">Lãnh đạo nhóm</div>
+        <div class="draggable-box" id="skill-3">Lập trình Python</div>
+        <div class="draggable-box" id="skill-4">Tư duy chiến lược</div>
+        <div class="draggable-box" id="skill-5">An toàn thông tin</div>
+        <div class="draggable-box" id="skill-6">Quản lý ngân sách</div>
+        <div class="draggable-box" id="skill-7">Xử lý ngôn ngữ</div>
+    </div>
+
+    <div class="matrix-container">
+        <div id="zone-1" class="drop-zone">
+            <div class="zone-header">1. AI LITERACY</div>
+            <p style="font-size: 11px; color: #666;">Thả các kỹ năng liên quan đến AI vào đây</p>
+        </div>
+
+        <div id="zone-2" class="drop-zone">
+            <div class="zone-header">2. ONBOARDING AUTOMATIC</div>
+            <p style="font-size: 11px; color: #666;">Thả các kỹ năng tự động hóa vào đây</p>
+        </div>
+        
+        <div id="zone-3" class="drop-zone">
+            <div class="zone-header">3. TECHNICAL SKILLS</div>
+            <p style="font-size: 11px; color: #666;">Thả các kỹ năng chuyên môn vào đây</p>
+        </div>
+
+        <div id="zone-4" class="drop-zone">
+            <div class="zone-header">4. MANAGERIAL SKILLS</div>
+            <p style="font-size: 11px; color: #666;">Thả các kỹ năng quản lý vào đây</p>
+        </div>
+        
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; color: #007bff;">
+            ♾️
+        </div>
+    </div>
+
+    <script>
+        $( function() {
+            // 1. Cấu hình các Hộp Kéo (Draggable)
+            $( ".draggable-box" ).draggable({
+                revert: "invalid", 
+                helper: "clone",   
+                cursor: "move"     
+            });
+
+            // 2. Cấu hình các Vùng Thả (Droppable)
+            $( ".drop-zone" ).droppable({
+                accept: ".draggable-box", 
+                drop: function( event, ui ) {
+                    var droppedItem = ui.draggable;
+                    var originalItem = droppedItem.hasClass('ui-draggable-dragging') ? ui.helper : droppedItem;
+
+                    originalItem.appendTo( this ).css({
+                        'position': 'relative', 
+                        'top': 'auto',
+                        'left': 'auto',
+                        'margin': '5px' 
+                    });
+                },
+                over: function(event, ui) {
+                    $(this).css('border-color', '#ff6f61'); 
+                },
+                out: function(event, ui) {
+                    $(this).css('border-color', '#007bff');
+                }
+            });
+        } );
+    </script>
+
+</body>
+</html>
