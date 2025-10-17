@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Thu Gọn</title>
+    <title>Drag and Drop Training Matrix - Overlay</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
@@ -13,87 +13,83 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            /* Đảm bảo tên file ảnh nền khớp với file bạn đã lưu */
-            background-image: url('background-matrix.png'); 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat; 
-            min-height: 100vh;
+            background-color: #f0f4f7;
             margin: 0;
         }
 
-        h1 {
-            color: #333; 
-            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
-        }
-
-        /* ------------------------ Khu vực Hộp Kéo (Nhỏ hơn) ------------------------ */
+        /* ------------------------ Khu vực Hộp Kéo ------------------------ */
         #draggable-items {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px; /* Giảm khoảng cách */
+            gap: 8px;
             padding: 10px;
-            background-color: rgba(255, 255, 255, 0.9);
-            width: 600px; /* Thu nhỏ chiều rộng */
+            background-color: #fff;
+            width: 800px;
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
         .draggable-box {
-            width: 100px; /* Thu nhỏ kích thước hộp */
-            height: 35px; /* Thu nhỏ kích thước hộp */
+            width: 120px;
+            height: 35px;
             line-height: 35px;
             text-align: center;
-            background-color: #ff6f61;
+            background-color: #ff6f61; /* Màu nổi bật */
             color: white;
             border-radius: 4px;
             cursor: grab;
-            font-size: 13px; /* Thu nhỏ font */
+            font-size: 13px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            z-index: 10;
+            z-index: 100; /* Đảm bảo hộp nằm trên tất cả */
         }
 
-        /* ------------------------ Khu vực Ma trận 4 ô (Nhỏ hơn) ------------------------ */
-        .matrix-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px; /* Giảm khoảng cách giữa các ô */
-            width: 600px; /* Thu nhỏ chiều rộng */
-            height: 400px; /* Thu nhỏ chiều cao */
+        /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
+        .matrix-wrapper {
+            /* Kích thước của container phải khớp với ảnh nền */
+            width: 800px; 
+            height: 500px;
             position: relative;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background-image: url('background-matrix.png'); /* Đảm bảo tên file khớp */
+            background-size: contain; /* Giữ tỷ lệ và chứa vừa */
+            background-repeat: no-repeat;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .drop-zone {
-            border: 2px solid #007bff;
-            border-radius: 6px; /* Giảm bo tròn */
-            padding: 8px; /* Giảm padding */
-            background-color: rgba(233, 247, 255, 0.7);
-            min-height: 180px;
-        }
-
-        .zone-header {
-            background-color: #007bff;
-            padding: 4px 8px;
-            font-size: 14px; /* Thu nhỏ font header */
+        .overlay-zone {
+            position: absolute;
+            /* Thiết lập ban đầu (có thể tùy chỉnh) */
+            width: 48%; 
+            height: 48%; 
+            padding: 5px;
+            overflow: auto; /* Cho phép cuộn nếu nhiều hộp được thả vào */
+            
+            /* Dùng border trong suốt để xác định vùng nhưng không che khuất ảnh nền */
+            border: 2px dashed rgba(255, 255, 255, 0); 
+            background-color: rgba(255, 255, 255, 0); /* Trong suốt */
+            transition: border-color 0.2s; /* Hiệu ứng chuyển màu khi kéo qua */
         }
         
-        .matrix-container > div:last-child { 
-            color: #0056b3; 
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        /* CÁC VỊ TRÍ CHÍNH XÁC CỦA 4 Ô TRÊN ẢNH NỀN (CẦN ĐIỀU CHỈNH THÊM) */
+        #zone-1 { top: 1%; left: 1%; } /* Góc trên trái */
+        #zone-2 { top: 1%; left: 51%; } /* Góc trên phải */
+        #zone-3 { top: 51%; left: 1%; } /* Góc dưới trái */
+        #zone-4 { top: 51%; left: 51%; } /* Góc dưới phải */
+        
+        /* HIỆU ỨNG KHI KÉO QUA */
+        .overlay-zone.ui-droppable-hover {
+            border-color: #ff6f61; /* Hiện viền khi kéo qua */
+            background-color: rgba(255, 255, 255, 0.2); /* Thêm lớp mờ nhẹ */
         }
     </style>
 </head>
 <body>
 
-    <h1>Kéo Thả Kỹ Năng Vào Lộ Trình Đào Tạo</h1>
+    <h1>Kéo Thả Kỹ Năng (AI Literacy đã được thêm)</h1>
     
     <div id="draggable-items">
-        <div class="draggable-box" id="skill-1">AI Literacy</div> <div class="draggable-box" id="skill-2">Lãnh đạo nhóm</div>
+        <div class="draggable-box" id="skill-1">AI Literacy</div>
+        <div class="draggable-box" id="skill-2">Lãnh đạo nhóm</div>
         <div class="draggable-box" id="skill-3">Lập trình Python</div>
         <div class="draggable-box" id="skill-4">Tư duy chiến lược</div>
         <div class="draggable-box" id="skill-5">An toàn thông tin</div>
@@ -101,30 +97,14 @@
         <div class="draggable-box" id="skill-7">Xử lý ngôn ngữ</div>
     </div>
 
-    <div class="matrix-container">
-        <div id="zone-1" class="drop-zone">
-            <div class="zone-header">1. AI LITERACY</div>
-            <p style="font-size: 11px; color: #666;">Thả các kỹ năng liên quan đến AI vào đây</p>
-        </div>
+    <div class="matrix-wrapper">
+        <div id="zone-1" class="overlay-zone"></div>
 
-        <div id="zone-2" class="drop-zone">
-            <div class="zone-header">2. ONBOARDING AUTOMATIC</div>
-            <p style="font-size: 11px; color: #666;">Thả các kỹ năng tự động hóa vào đây</p>
-        </div>
+        <div id="zone-2" class="overlay-zone"></div>
         
-        <div id="zone-3" class="drop-zone">
-            <div class="zone-header">3. TECHNICAL SKILLS</div>
-            <p style="font-size: 11px; color: #666;">Thả các kỹ năng chuyên môn vào đây</p>
-        </div>
+        <div id="zone-3" class="overlay-zone"></div>
 
-        <div id="zone-4" class="drop-zone">
-            <div class="zone-header">4. MANAGERIAL SKILLS</div>
-            <p style="font-size: 11px; color: #666;">Thả các kỹ năng quản lý vào đây</p>
-        </div>
-        
-        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; color: #007bff;">
-            ♾️
-        </div>
+        <div id="zone-4" class="overlay-zone"></div>
     </div>
 
     <script>
@@ -132,30 +112,35 @@
             // 1. Cấu hình các Hộp Kéo (Draggable)
             $( ".draggable-box" ).draggable({
                 revert: "invalid", 
-                helper: "clone",   
-                cursor: "move"     
+                cursor: "move",
+                // Khi bắt đầu kéo, tạo một bản sao để kéo
+                helper: function(event) {
+                    return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
+                }
             });
 
             // 2. Cấu hình các Vùng Thả (Droppable)
-            $( ".drop-zone" ).droppable({
+            $( ".overlay-zone" ).droppable({
                 accept: ".draggable-box", 
                 drop: function( event, ui ) {
                     var droppedItem = ui.draggable;
-                    var originalItem = droppedItem.hasClass('ui-draggable-dragging') ? ui.helper : droppedItem;
+                    
+                    // Tạo một bản sao mới của hộp để đưa vào vùng thả
+                    var newDroppedItem = droppedItem.clone();
 
-                    originalItem.appendTo( this ).css({
+                    // Di chuyển bản sao mới vào vùng thả hiện tại
+                    newDroppedItem.appendTo( this ).css({
                         'position': 'relative', 
                         'top': 'auto',
                         'left': 'auto',
-                        'margin': '5px' 
+                        'margin': '5px 5px 0 0', /* Giảm margin để các hộp sát nhau hơn */
+                        'float': 'left' /* Cho phép các hộp xếp cạnh nhau */
                     });
+                    
+                    // Nếu muốn xóa hộp gốc khỏi danh sách kéo sau khi thả (tùy chọn)
+                    // droppedItem.remove(); 
                 },
-                over: function(event, ui) {
-                    $(this).css('border-color', '#ff6f61'); 
-                },
-                out: function(event, ui) {
-                    $(this).css('border-color', '#007bff');
-                }
+                // Hiệu ứng hover đã được xử lý bằng class .ui-droppable-hover trong CSS
             });
         } );
     </script>
