@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drag and Drop Training Matrix</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            /* --- THAY ĐỔI Ở ĐÂY ĐỂ ĐẶT HÌNH NỀN --- */
+            background-image: url('background-matrix.png'); /* Đặt tên file ảnh của bạn */
+            background-size: cover; /* Đảm bảo ảnh nền phủ toàn bộ */
+            background-position: center; /* Căn giữa ảnh nền */
+            background-repeat: no-repeat; /* Không lặp lại ảnh nền */
+            min-height: 100vh; /* Đảm bảo body đủ cao để thấy ảnh nền */
+            margin: 0;
+        }
+
+        h1 {
+            color: #333; /* Điều chỉnh màu chữ để dễ nhìn trên nền */
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8); /* Thêm bóng chữ */
+        }
+
+        /* Điều chỉnh lại màu nền cho các hộp để nó nổi bật trên ảnh nền */
+        #draggable-items {
+            background-color: rgba(255, 255, 255, 0.9); /* Nền trắng trong suốt nhẹ */
+            border: 1px solid #ccc;
+            width: 800px;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .draggable-box {
+            background-color: #ff6f61; /* Giữ màu nổi bật */
+            color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Bóng rõ hơn */
+        }
+
+        .matrix-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 800px;
+            height: 500px;
+            margin-bottom: 30px;
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.8); /* Nền trắng trong suốt cho container chính */
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .drop-zone {
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            background-color: rgba(233, 247, 255, 0.7); /* Nền xanh trong suốt nhẹ */
+            min-height: 200px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .zone-header {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Điều chỉnh ký hiệu vô cực nếu bạn muốn nó nổi bật hơn trên ảnh nền */
+        .matrix-container > div:last-child { /* Đây là div chứa icon vô cực */
+            color: #0056b3; /* Màu đậm hơn */
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Bóng cho icon */
+        }
+    </style>
+</head>
+<body>
