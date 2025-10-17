@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Auto Fill Đáp Án</title>
+    <title>Drag and Drop Training Matrix - Đã Sửa Lỗi Kéo Sau Khi Fill</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
@@ -92,7 +92,7 @@
             background-color: rgba(255, 255, 255, 0.95); 
         }
 
-        /* ------------------------ NÚT ĐÁP ÁN (MỚI) ------------------------ */
+        /* ------------------------ NÚT ĐÁP ÁN ------------------------ */
         #show-answer-btn {
             padding: 10px 20px;
             font-size: 16px;
@@ -140,28 +140,17 @@
     <script>
         // MA TRẬN ĐÁP ÁN ĐỊNH NGHĨA
         const correctAnswers = {
-            // Cấu trúc: 'ID của Hộp': ['ID của Zone 1', 'ID của Zone 2', ...]
-            
-           const correctAnswers = {
-            // Leaders Talk: Ô 1, Ô 4
             'item-1': ['zone-1', 'zone-4'], 
-            // Hành trình Tân Thủ: Ô 2
             'item-2': ['zone-2'], 
-            // Botchat vận hành: Ô 3
             'item-3': ['zone-3'], 
-            // Field Sale Trainee: Ô 3
             'item-4': ['zone-3'], 
-            // Field Sale Leader: Ô 4
             'item-5': ['zone-4'], 
-            // Tuyển dụng và giữ chân nhân viên: Ô 4
             'item-6': ['zone-4'], 
-            // Performance Management: Ô 4
             'item-7': ['zone-4'], 
-            // Training Curriculumn: Ô 3
             'item-8': ['zone-3'], 
-            // New Onboarding Program: Ô 2
             'item-9': ['zone-2']  
         };
+
 
         // Hàm kiểm tra và kích hoạt nút Đáp Án
         function checkAnswerButtonStatus() {
@@ -179,13 +168,11 @@
         
         // HÀM: Tự động fill đáp án
         function showAnswer() {
-            // 1. Xóa tất cả các hộp hiện có trong 4 ô
+            // 1. Xóa tất cả các hộp hiện có trong 4 ô và các bản sao cũ
             $('.overlay-zone .draggable-box').remove();
-
-            // 2. Chuyển tất cả hộp đã kéo vào lại khu vực gốc (đảm bảo chúng ta chỉ clone từ hộp gốc)
             $('#draggable-items .draggable-box[data-cloned="true"]').remove();
             
-            // 3. Lặp qua ma trận đáp án và fill
+            // 2. Lặp qua ma trận đáp án và fill
             for (const itemId in correctAnswers) {
                 const targetZones = correctAnswers[itemId];
                 const originalItem = $('#' + itemId);
@@ -206,12 +193,13 @@
                             });
                         
                         newItem.appendTo(targetZone);
-                        makeDraggable(newItem); // Áp dụng lại tính năng kéo cho hộp mới
+                        // SỬA LỖI: Áp dụng lại tính năng kéo (draggable) cho hộp mới
+                        makeDraggable(newItem); 
                     });
                 }
             }
             
-            // 4. Đổi tên nút
+            // 3. Đổi tên nút
             $('#show-answer-btn').text("Đã Hiển Thị Đáp Án");
         }
 
@@ -238,7 +226,6 @@
                     var droppedItem = ui.draggable;
                     var newItem;
 
-                    // Logic drop giữ nguyên
                     if (droppedItem.closest('#draggable-items').length) {
                         newItem = droppedItem.clone().attr('data-cloned', 'true').css({'position': 'relative', 'top': 'auto', 'left': 'auto'});
                         newItem.appendTo(this).css({
@@ -257,7 +244,7 @@
                         });
                         makeDraggable(originalItem);
                     }
-                    checkAnswerButtonStatus(); // Cập nhật trạng thái nút sau khi thả
+                    checkAnswerButtonStatus(); 
                 },
             });
 
@@ -270,11 +257,9 @@
                     if (droppedItem.closest('.overlay-zone').length) {
                         var originalItem = ui.helper.data('original') || droppedItem;
                         
-                        // Xóa hộp đã được clone khi kéo ngược về
                         if (originalItem.attr('data-cloned')) {
                             originalItem.remove();
                         } else {
-                            // Di chuyển hộp gốc về lại khu vực ban đầu (chỉ khi là hộp gốc)
                             originalItem.appendTo(this).css({
                                 'position': 'relative', 
                                 'top': 'auto', 
@@ -285,7 +270,7 @@
                             makeDraggable(originalItem);
                         }
                     }
-                    checkAnswerButtonStatus(); // Cập nhật trạng thái nút sau khi kéo ngược
+                    checkAnswerButtonStatus(); 
                 },
                 over: function(event, ui) {
                     $(this).css('border-style', 'solid');
@@ -303,7 +288,6 @@
                 ui.helper.data('original', $(this));
             });
             
-            // Kiểm tra trạng thái nút lần đầu khi tải trang
             checkAnswerButtonStatus(); 
         } );
     </script>
