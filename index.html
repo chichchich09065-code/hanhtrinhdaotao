@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Cập nhật Tên Hộp</title>
+    <title>Drag and Drop Training Matrix - Có Đáp Án</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
@@ -33,28 +33,24 @@
         }
 
         .draggable-box {
-            /* THAY ĐỔI: Sử dụng 'fit-content' hoặc 'auto' để chiều rộng theo nội dung */
             width: fit-content; 
-            min-width: 110px; /* Đảm bảo các hộp ngắn nhất cũng có kích thước tối thiểu */
-            
+            min-width: 110px;
             height: 25px; 
             line-height: 25px;
             text-align: center;
-            background-color: #FF5200; 
+            background-color: #FF5200; /* Màu cam */
             color: white;
             border-radius: 4px;
             cursor: grab;
             font-size: 13px; 
-            padding: 0 8px; /* THAY ĐỔI: Thêm padding ngang để chữ không bị sát viền */
-            white-space: nowrap; /* Đảm bảo chữ không bị xuống dòng */
+            padding: 0 8px; 
+            white-space: nowrap; 
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             z-index: 100;
         }
 
         /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
-        /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
         .matrix-wrapper {
-            /* Kích thước hiển thị: 900px x 636px (Giữ tỷ lệ 2245:1587) */
             width: 900px; 
             height: 636px;
             position: relative;
@@ -63,6 +59,7 @@
             background-position: center;
             background-repeat: no-repeat;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px; /* Thêm margin dưới cho nút đáp án */
         }
 
         .overlay-zone {
@@ -74,37 +71,15 @@
             transition: border-color 0.2s; 
         }
         
-        /* CĂN CHỈNH CHÍNH XÁC Ô 1 (AI LITERACY) - Dữ liệu cũ */
-        #zone-1 { 
-            left: 8.77%; 
-            top: 20.92%; 
-            width: 35.54%; 
-            height: 21.80%; 
-        } 
-        
-        /* CĂN CHỈNH CHÍNH XÁC Ô 2 (ONBOARDING AUTOMATIC) */
-        #zone-2 { 
-            left: 54.00%; 
-            top: 20.92%; 
-            width: 37.37%; 
-            height: 16.89%; 
-        } 
-        
-        /* CĂN CHỈNH CHÍNH XÁC Ô 3 (TECHNICAL SKILLS) */
-        #zone-3 { 
-            left: 9.53%; 
-            top: 65.59%; 
-            width: 33.01%; 
-            height: 20.29%; 
-        }
-        
-        /* CĂN CHỈNH CHÍNH XÁC Ô 4 (MANAGERIAL SKILLS) */
-        #zone-4 { 
-            left: 54.00%; 
-            top: 65.59%; 
-            width: 37.37%; 
-            height: 20.29%; 
-        }
+        /* CĂN CHỈNH CHÍNH XÁC 4 Ô */
+        /* [197, 332] -> [995, 678] */
+        #zone-1 { left: 8.77%; top: 20.92%; width: 35.54%; height: 21.80%; } 
+        /* [1212, 332] -> [2051, 600] */
+        #zone-2 { left: 54.00%; top: 20.92%; width: 37.37%; height: 16.89%; } 
+        /* [214, 1041] -> [955, 1363] */
+        #zone-3 { left: 9.53%; top: 65.59%; width: 33.01%; height: 20.29%; }
+        /* [1212, 1041] -> [2051, 1363] */
+        #zone-4 { left: 54.00%; top: 65.59%; width: 37.37%; height: 20.29%; }
         
         /* HIỆU ỨNG KHI KÉO QUA */
         .overlay-zone.ui-droppable-hover {
@@ -115,6 +90,43 @@
         #draggable-items.ui-droppable-hover {
             border-color: #FF5200; 
             background-color: rgba(255, 255, 255, 0.95); 
+        }
+
+        /* ------------------------ NÚT ĐÁP ÁN (MỚI) ------------------------ */
+        #show-answer-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background-color: #007bff; /* Xanh biển */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+
+        #show-answer-btn:disabled {
+            background-color: #adb5bd; /* Xám khi bị vô hiệu hóa */
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* ------------------------ HỘP ĐÁP ÁN (MỚI) ------------------------ */
+        #answer-box {
+            width: 900px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            display: none; /* Ẩn ban đầu */
+        }
+        #answer-box strong {
+            color: #007bff;
+        }
+        #answer-box p {
+            margin: 5px 0;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -141,7 +153,37 @@
         <div id="zone-4" class="overlay-zone"></div>
     </div>
 
+    <button id="show-answer-btn" disabled>Hiển Thị Đáp Án</button>
+
+    <div id="answer-box">
+        <h2>Đáp Án Gợi Ý:</h2>
+        <p><strong>Leaders Talk:</strong> Ô 1, Ô 4</p>
+        <p><strong>Hành trình Tân Thủ:</strong> Ô 1</p>
+        <p><strong>Botchat vận hành:</strong> Ô 2</p>
+        <p><strong>Field Sale Trainee:</strong> Ô 3</p>
+        <p><strong>Field Sale Leader:</strong> Ô 4</p>
+        <p><strong>Tuyển dụng và giữ chân nhân viên:</strong> Ô 4</p>
+        <p><strong>Performance Management:</strong> Ô 4</p>
+        <p><strong>Training Curriculumn:</strong> Ô 1, Ô 3</p>
+        <p><strong>New Onboarding Program:</strong> Ô 2</p>
+        </div>
+
     <script>
+        // Hàm kiểm tra và kích hoạt nút Đáp Án
+        function checkAnswerButtonStatus() {
+            var totalItemsInZones = 0;
+            $('.overlay-zone').each(function() {
+                totalItemsInZones += $(this).children('.draggable-box').length;
+            });
+            
+            // Kích hoạt nút nếu có ít nhất 1 hộp đã được thả
+            if (totalItemsInZones > 0) {
+                $('#show-answer-btn').prop('disabled', false);
+            } else {
+                $('#show-answer-btn').prop('disabled', true);
+            }
+        }
+
         $( function() {
             // 1. Cấu hình các Hộp Kéo (Draggable)
             function makeDraggable(element) {
@@ -164,20 +206,15 @@
                     var droppedItem = ui.draggable;
                     var newItem;
 
-                    // Nếu kéo từ khu vực chính (#draggable-items)
                     if (droppedItem.closest('#draggable-items').length) {
-                        // Tạo clone và thêm vào zone
                         newItem = droppedItem.clone().css({'position': 'relative', 'top': 'auto', 'left': 'auto'});
                         newItem.appendTo(this).css({
                             'margin': '5px 5px 0 0', 
                             'float': 'left'
                         });
-                        // Áp dụng lại tính năng kéo cho hộp mới
                         makeDraggable(newItem);
                     } else if (droppedItem.closest('.overlay-zone').length) {
-                        // Nếu kéo từ zone khác sang zone này (di chuyển)
                         var originalItem = ui.helper.data('original') || droppedItem;
-                        
                         originalItem.appendTo(this).css({
                             'position': 'relative', 
                             'top': 'auto',
@@ -187,6 +224,7 @@
                         });
                         makeDraggable(originalItem);
                     }
+                    checkAnswerButtonStatus(); // Cập nhật trạng thái nút sau khi thả
                 },
             });
 
@@ -196,7 +234,6 @@
                 drop: function(event, ui) {
                     var droppedItem = ui.draggable;
                     
-                    // Nếu hộp đang nằm trong khu vực 4 ô (overlay-zone), di chuyển nó về lại đây
                     if (droppedItem.closest('.overlay-zone').length) {
                         var originalItem = ui.helper.data('original') || droppedItem;
                         
@@ -209,6 +246,7 @@
                         });
                         makeDraggable(originalItem);
                     }
+                    checkAnswerButtonStatus(); // Cập nhật trạng thái nút sau khi kéo ngược
                 },
                 over: function(event, ui) {
                     $(this).css('border-style', 'solid');
@@ -218,11 +256,18 @@
                 }
             });
 
-            // Gán hộp gốc vào helper data khi kéo 
+            // 4. Logic cho NÚT ĐÁP ÁN
+            $('#show-answer-btn').on('click', function() {
+                $('#answer-box').slideToggle(); // Hiển thị/Ẩn hộp đáp án
+            });
+
+            // Gán hộp gốc vào helper data khi kéo
              $(document).on('dragstart', '.draggable-box', function(event, ui) {
                 ui.helper.data('original', $(this));
             });
-
+            
+            // Kiểm tra trạng thái nút lần đầu khi tải trang
+            checkAnswerButtonStatus(); 
         } );
     </script>
 
