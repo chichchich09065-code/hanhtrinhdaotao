@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Sửa Lỗi Fill Đáp Án</title>
+    <title>Drag and Drop Training Matrix - Sửa Lỗi Fill Đáp Án Cuối Cùng</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
@@ -48,10 +48,6 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             z-index: 100;
         }
-        /* Phân biệt hộp gốc (không kéo ra được) và hộp clone */
-        .draggable-box:not([data-original="true"]) {
-            /* Các hộp được clone/kéo ra sẽ không có data-original="true" */
-        }
 
         /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
         .matrix-wrapper {
@@ -76,13 +72,9 @@
         }
         
         /* CĂN CHỈNH CHÍNH XÁC 4 Ô */
-        /* [197, 332] -> [995, 678] */
         #zone-1 { left: 8.77%; top: 20.92%; width: 35.54%; height: 21.80%; } 
-        /* [1212, 332] -> [2051, 600] */
         #zone-2 { left: 54.00%; top: 20.92%; width: 37.37%; height: 16.89%; } 
-        /* [214, 1041] -> [955, 1363] */
         #zone-3 { left: 9.53%; top: 65.59%; width: 33.01%; height: 20.29%; }
-        /* [1212, 1041] -> [2051, 1363] */
         #zone-4 { left: 54.00%; top: 65.59%; width: 37.37%; height: 20.29%; }
         
         /* HIỆU ỨNG KHI KÉO QUA */
@@ -155,32 +147,38 @@
             'item-9': ['zone-2']  
         };
 
-
-        // Hàm kiểm tra và kích hoạt nút Đáp Án
-        function checkAnswerButtonStatus() {
-            var totalItemsInZones = 0;
-            $('.overlay-zone').each(function() {
-                totalItemsInZones += $(this).children('.draggable-box').length;
+        // --- HÀM DRAGGABLE ---
+        function makeDraggable(element) {
+            $(element).draggable({
+                revert: "invalid", 
+                cursor: "move",
+                helper: function(event) {
+                    return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
+                }
             });
+        }
+
+        // --- HÀM KIỂM TRA NÚT ---
+        function checkAnswerButtonStatus() {
+            var totalItemsInZones = $('.overlay-zone').children('.draggable-box').length;
             
-            // Kích hoạt nút ngay cả khi tự fill để người dùng có thể bấm lại
-            // hoặc giữ logic cũ:
-            if (totalItemsInZones > 0 || $('.overlay-zone').children('.draggable-box').length > 0) {
+            if (totalItemsInZones > 0 || $('#show-answer-btn').text().includes("Đã")) {
                  $('#show-answer-btn').prop('disabled', false).text("Hiển Thị Đáp Án");
             } else {
                  $('#show-answer-btn').prop('disabled', true).text("Hiển Thị Đáp Án");
             }
         }
         
-        // HÀM: Tự động fill đáp án (SỬA LỖI ĐỂ CHỈ CLONE, KHÔNG LÀM LỆCH HỘP GỐC)
+        // --- HÀM AUTO-FILL ĐÃ SỬA LỖI TÌM KIẾM HỘP GỐC ---
         function showAnswer() {
-            // 1. Xóa TẤT CẢ các hộp đang nằm trong 4 ô
+            // 1. XÓA SẠCH: Loại bỏ TẤT CẢ các hộp hiện có trong 4 ô
             $('.overlay-zone .draggable-box').remove();
             
             // 2. Lặp qua ma trận đáp án và fill
             for (const itemId in correctAnswers) {
                 const targetZones = correctAnswers[itemId];
-                // Lấy hộp gốc từ #draggable-items (đã thêm data-original="true")
+                
+                // Lấy hộp gốc từ #draggable-items bằng ID và đảm bảo đó là hộp gốc
                 const originalItem = $('#' + itemId + '[data-original="true"]'); 
 
                 if (originalItem.length) {
@@ -189,7 +187,7 @@
                         
                         // CLONE hộp gốc
                         const newItem = originalItem.clone()
-                            .removeAttr('id') // Xóa ID của hộp clone để tránh trùng lặp
+                            .removeAttr('id') // Loại bỏ ID để tránh xung đột
                             .attr('data-cloned', 'true') // Đánh dấu là clone
                             .css({
                                 'position': 'relative', 
@@ -202,7 +200,7 @@
                         newItem.appendTo(targetZone);
                         makeDraggable(newItem); 
                     });
-                }
+                } 
             }
             
             // 3. Đổi tên nút
@@ -211,23 +209,7 @@
 
 
         $( function() {
-            // 1. Cấu hình các Hộp Kéo (Draggable)
-            function makeDraggable(element) {
-                $(element).draggable({
-                    revert: "invalid", 
-                    cursor: "move",
-                    // Tạo một bản sao để kéo (clone)
-                    helper: function(event) {
-                        // Nếu đang kéo hộp gốc, tạo clone
-                        if ($(this).attr('data-original') === 'true') {
-                             return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
-                        }
-                        // Nếu đang kéo hộp đã clone, dùng chính nó
-                        return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
-                    }
-                });
-            }
-
+            
             // Áp dụng tính năng kéo ban đầu cho các hộp gốc
             makeDraggable(".draggable-box[data-original='true']");
             
@@ -236,13 +218,11 @@
                 accept: ".draggable-box", 
                 drop: function( event, ui ) {
                     var droppedItem = ui.draggable;
-                    var newItem;
 
-                    // Nếu kéo từ khu vực chính (#draggable-items)
+                    // Nếu kéo từ khu vực chính (#draggable-items) - CHỈ CLONE
                     if (droppedItem.closest('#draggable-items').length) {
-                        // Clone hộp gốc (vì hộp gốc không được phép rời khỏi khu vực này)
-                        newItem = droppedItem.clone()
-                            .removeAttr('id') // Xóa ID để tránh trùng lặp
+                        var newItem = droppedItem.clone()
+                            .removeAttr('id') // Loại bỏ ID
                             .attr('data-cloned', 'true')
                             .css({'position': 'relative', 'top': 'auto', 'left': 'auto'});
                         
@@ -252,7 +232,7 @@
                         });
                         makeDraggable(newItem);
                     } else if (droppedItem.closest('.overlay-zone').length) {
-                        // Nếu di chuyển giữa các zone hoặc kéo hộp đã clone
+                        // Nếu di chuyển giữa các zone hoặc kéo hộp đã clone - DI CHUYỂN
                         var originalItem = ui.helper.data('original') || droppedItem;
                         originalItem.appendTo(this).css({
                             'position': 'relative', 
@@ -280,10 +260,6 @@
                         if (originalItem.attr('data-cloned')) {
                             originalItem.remove();
                         } 
-                        // Hộp gốc không bao giờ được phép kéo ra khỏi đây (logic mới)
-                        
-                        // Cần áp dụng lại draggable nếu hộp gốc được kéo, nhưng trong logic này
-                        // chúng ta chỉ xóa clone, hộp gốc luôn nằm tại vị trí ban đầu.
                     }
                     checkAnswerButtonStatus(); 
                 },
@@ -300,7 +276,6 @@
 
             // Gán hộp gốc vào helper data khi kéo
              $(document).on('dragstart', '.draggable-box', function(event, ui) {
-                // Đảm bảo chúng ta có tham chiếu đến hộp đang được thao tác (bản sao hoặc bản gốc)
                 ui.helper.data('original', $(this));
             });
             
