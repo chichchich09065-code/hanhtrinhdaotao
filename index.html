@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Overlay</title>
+    <title>Drag and Drop Training Matrix - Hoàn Chỉnh</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
@@ -24,10 +24,13 @@
             gap: 8px;
             padding: 10px;
             background-color: #fff;
-            width: 800px;
+            width: 900px; /* Căn chỉnh theo width của matrix-wrapper */
             border-radius: 8px;
             margin-bottom: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            /* Thêm vùng thả cho phép kéo ngược về */
+            min-height: 60px; 
+            border: 2px dashed #007bff;
         }
 
         .draggable-box {
@@ -35,57 +38,65 @@
             height: 35px;
             line-height: 35px;
             text-align: center;
-            background-color: #ff6f61; /* Màu nổi bật */
+            background-color: #ff6f61; 
             color: white;
             border-radius: 4px;
             cursor: grab;
             font-size: 13px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-            z-index: 100; /* Đảm bảo hộp nằm trên tất cả */
+            z-index: 100;
         }
 
         /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
         .matrix-wrapper {
-            /* Kích thước của container phải khớp với ảnh nền */
-            width: 800px; 
-            height: 500px;
+            /* Kích thước hiển thị mới: 900px x 636px (Theo tỷ lệ 2245:1587) */
+            width: 900px; 
+            height: 636px;
             position: relative;
             background-image: url('background-matrix.png'); /* Đảm bảo tên file khớp */
-            background-size: contain; /* Giữ tỷ lệ và chứa vừa */
+            background-size: cover; /* Đã đổi từ 'contain' sang 'cover' */
+            background-position: center;
             background-repeat: no-repeat;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
         .overlay-zone {
             position: absolute;
-            /* Thiết lập ban đầu (có thể tùy chỉnh) */
-            width: 48%; 
-            height: 48%; 
-            padding: 5px;
-            overflow: auto; /* Cho phép cuộn nếu nhiều hộp được thả vào */
+            /* Tỷ lệ ảnh gốc: 2245/1587 ≈ 1.415. Các giá trị dưới đây đã được tính lại theo tỷ lệ đó. */
             
-            /* Dùng border trong suốt để xác định vùng nhưng không che khuất ảnh nền */
+            /* Tọa độ và kích thước vùng thả (Cần tinh chỉnh nếu ảnh gốc có padding) */
+            width: 44.5%; 
+            height: 44.5%; 
+            padding: 5px;
+            overflow: auto; 
+            
             border: 2px dashed rgba(255, 255, 255, 0); 
-            background-color: rgba(255, 255, 255, 0); /* Trong suốt */
-            transition: border-color 0.2s; /* Hiệu ứng chuyển màu khi kéo qua */
+            background-color: rgba(255, 255, 255, 0); 
+            transition: border-color 0.2s; 
         }
         
-        /* CÁC VỊ TRÍ CHÍNH XÁC CỦA 4 Ô TRÊN ẢNH NỀN (CẦN ĐIỀU CHỈNH THÊM) */
-        #zone-1 { top: 1%; left: 1%; } /* Góc trên trái */
-        #zone-2 { top: 1%; left: 51%; } /* Góc trên phải */
-        #zone-3 { top: 51%; left: 1%; } /* Góc dưới trái */
-        #zone-4 { top: 51%; left: 51%; } /* Góc dưới phải */
+        /* CÁC VỊ TRÍ CHÍNH XÁC CỦA 4 Ô TRÊN ẢNH NỀN */
+        /* Giả định: Ảnh nền có khoảng trống (margin) 2.5% xung quanh */
+        #zone-1 { top: 2.5%; left: 2.5%; } 
+        #zone-2 { top: 2.5%; left: 53%; } 
+        #zone-3 { top: 53%; left: 2.5%; } 
+        #zone-4 { top: 53%; left: 53%; }
         
         /* HIỆU ỨNG KHI KÉO QUA */
         .overlay-zone.ui-droppable-hover {
-            border-color: #ff6f61; /* Hiện viền khi kéo qua */
-            background-color: rgba(255, 255, 255, 0.2); /* Thêm lớp mờ nhẹ */
+            border-color: #ff6f61; 
+            background-color: rgba(255, 255, 255, 0.2); 
+        }
+        
+        #draggable-items.ui-droppable-hover {
+            border-color: #ff6f61; 
+            background-color: rgba(255, 255, 255, 0.95); 
         }
     </style>
 </head>
 <body>
 
-    <h1>Kéo Thả Kỹ Năng (AI Literacy đã được thêm)</h1>
+    <h1>Kéo Thả Kỹ Năng (Có thể kéo ngược ra)</h1>
     
     <div id="draggable-items">
         <div class="draggable-box" id="skill-1">AI Literacy</div>
@@ -99,49 +110,101 @@
 
     <div class="matrix-wrapper">
         <div id="zone-1" class="overlay-zone"></div>
-
         <div id="zone-2" class="overlay-zone"></div>
-        
         <div id="zone-3" class="overlay-zone"></div>
-
         <div id="zone-4" class="overlay-zone"></div>
     </div>
 
     <script>
         $( function() {
             // 1. Cấu hình các Hộp Kéo (Draggable)
-            $( ".draggable-box" ).draggable({
-                revert: "invalid", 
-                cursor: "move",
-                // Khi bắt đầu kéo, tạo một bản sao để kéo
-                helper: function(event) {
-                    return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
-                }
-            });
+            // Lần này, tất cả các hộp (kể cả đã thả) đều có thể kéo được
+            function makeDraggable(element) {
+                $(element).draggable({
+                    revert: "invalid", // Chỉ quay về nếu không thả vào vùng hợp lệ
+                    cursor: "move",
+                    // Khi bắt đầu kéo, tạo một bản sao để kéo
+                    helper: function(event) {
+                        // Nếu hộp đang nằm trong drop-zone, ta kéo chính nó
+                        if ($(this).closest('.overlay-zone').length) {
+                             return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
+                        }
+                        // Nếu hộp nằm trong #draggable-items, ta kéo clone
+                        return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
+                    }
+                });
+            }
 
-            // 2. Cấu hình các Vùng Thả (Droppable)
+            // Áp dụng tính năng kéo ban đầu
+            makeDraggable(".draggable-box");
+            
+            // 2. Cấu hình Vùng Thả Chính (4 ô)
             $( ".overlay-zone" ).droppable({
                 accept: ".draggable-box", 
                 drop: function( event, ui ) {
                     var droppedItem = ui.draggable;
                     
-                    // Tạo một bản sao mới của hộp để đưa vào vùng thả
-                    var newDroppedItem = droppedItem.clone();
+                    // Lấy bản sao hoặc chính hộp gốc tùy thuộc vị trí
+                    var originalItem = droppedItem.closest('#draggable-items').length ? droppedItem : ui.helper.data('original');
+                    var newItem;
 
-                    // Di chuyển bản sao mới vào vùng thả hiện tại
-                    newDroppedItem.appendTo( this ).css({
-                        'position': 'relative', 
-                        'top': 'auto',
-                        'left': 'auto',
-                        'margin': '5px 5px 0 0', /* Giảm margin để các hộp sát nhau hơn */
-                        'float': 'left' /* Cho phép các hộp xếp cạnh nhau */
-                    });
-                    
-                    // Nếu muốn xóa hộp gốc khỏi danh sách kéo sau khi thả (tùy chọn)
-                    // droppedItem.remove(); 
-                },
-                // Hiệu ứng hover đã được xử lý bằng class .ui-droppable-hover trong CSS
+                    // Nếu kéo từ khu vực chính (đầu tiên)
+                    if (droppedItem.closest('#draggable-items').length) {
+                        // Clone hộp gốc, đặt position: relative
+                        newItem = droppedItem.clone().css({'position': 'relative', 'top': 'auto', 'left': 'auto'});
+                        newItem.appendTo(this).css({
+                            'margin': '5px 5px 0 0', 
+                            'float': 'left'
+                        });
+                        // Áp dụng lại tính năng kéo cho hộp mới
+                        makeDraggable(newItem);
+                    } else if (droppedItem.closest('.overlay-zone').length) {
+                        // Nếu kéo từ zone khác sang zone này (di chuyển)
+                        newItem = droppedItem;
+                        newItem.appendTo(this).css({
+                            'position': 'relative', 
+                            'top': 'auto',
+                            'left': 'auto',
+                            'margin': '5px 5px 0 0', 
+                            'float': 'left'
+                        });
+                    }
+                }
             });
+
+            // 3. Cấu hình Vùng Thả Ngược (Khu vực kéo ban đầu)
+            $("#draggable-items").droppable({
+                accept: ".draggable-box",
+                drop: function(event, ui) {
+                    var droppedItem = ui.draggable;
+                    
+                    // Nếu hộp đang nằm trong khu vực 4 ô (overlay-zone), di chuyển nó về lại đây
+                    if (droppedItem.closest('.overlay-zone').length) {
+                        droppedItem.appendTo(this).css({
+                            'position': 'relative', 
+                            'top': 'auto', 
+                            'left': 'auto',
+                            'float': 'none', /* Bỏ float để sắp xếp như danh sách ban đầu */
+                            'margin': '0 0 0 0'
+                        });
+                    }
+                    // Nếu hộp đã ở trong #draggable-items rồi, không làm gì cả
+                },
+                // Thêm hiệu ứng hover
+                over: function(event, ui) {
+                    $(this).css('border-style', 'solid');
+                },
+                out: function(event, ui) {
+                    $(this).css('border-style', 'dashed');
+                }
+            });
+
+            // Quan trọng: Áp dụng lại tính năng kéo cho tất cả các hộp con sau khi drop
+            // Điều này đảm bảo các hộp con trong các zone vẫn kéo được
+            $(document).on('dragstop', '.draggable-box', function(event, ui) {
+                makeDraggable('.draggable-box');
+            });
+
         } );
     </script>
 
