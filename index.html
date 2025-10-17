@@ -33,7 +33,10 @@
         }
 
         .draggable-box {
-            width: 110px; 
+            /* THAY ĐỔI: Sử dụng 'fit-content' hoặc 'auto' để chiều rộng theo nội dung */
+            width: fit-content; 
+            min-width: 110px; /* Đảm bảo các hộp ngắn nhất cũng có kích thước tối thiểu */
+            
             height: 25px; 
             line-height: 25px;
             text-align: center;
@@ -42,6 +45,8 @@
             border-radius: 4px;
             cursor: grab;
             font-size: 13px; 
+            padding: 0 8px; /* THAY ĐỔI: Thêm padding ngang để chữ không bị sát viền */
+            white-space: nowrap; /* Đảm bảo chữ không bị xuống dòng */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             z-index: 100;
         }
