@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Hoàn Chỉnh</title>
+    <title>Drag and Drop Training Matrix - Cập nhật Tên Hộp</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
@@ -33,7 +33,7 @@
         }
 
         .draggable-box {
-            width: 120px;
+            width: 150px; /* Tăng chiều rộng để vừa tên dài hơn */
             height: 35px;
             line-height: 35px;
             text-align: center;
@@ -68,7 +68,7 @@
             transition: border-color 0.2s; 
         }
         
-        /* CĂN CHỈNH CHÍNH XÁC Ô 1 (AI LITERACY) DỰA TRÊN TỌA ĐỘ PIXEL BẠN CUNG CẤP */
+        /* CĂN CHỈNH CHÍNH XÁC Ô 1 (AI LITERACY) */
         #zone-1 { 
             left: 17.31%; 
             top: 18.78%; 
@@ -76,16 +76,16 @@
             height: 19.03%; 
         } 
         
-        /* CĂN CHỈNH ƯỚC TÍNH CÁC Ô CÒN LẠI (SỬ DỤNG GIÁ TRỊ TƯƠNG ĐỐI TỪ Ô 1) */
+        /* CĂN CHỈNH ƯỚC TÍNH CÁC Ô CÒN LẠI */
         #zone-2 { 
-            left: 52.69%; /* Bắt đầu sau zone-1 và có khoảng cách 5% */
+            left: 52.69%; 
             top: 18.78%; 
             width: 30.00%; 
             height: 19.03%; 
         } 
         #zone-3 { 
             left: 17.31%; 
-            top: 62%; /* Ước tính cho phần dưới */
+            top: 62%; 
             width: 30.00%; 
             height: 19.03%; 
         }
@@ -110,16 +110,18 @@
 </head>
 <body>
 
-    <h1>Kéo Thả Kỹ Năng (Ô 1 đã được căn chỉnh)</h1>
+    <h1>Kéo Thả Kỹ Năng (Sản phẩm/Khóa học)</h1>
     
     <div id="draggable-items">
-        <div class="draggable-box" id="skill-1">AI Literacy</div>
-        <div class="draggable-box" id="skill-2">Lãnh đạo nhóm</div>
-        <div class="draggable-box" id="skill-3">Lập trình Python</div>
-        <div class="draggable-box" id="skill-4">Tư duy chiến lược</div>
-        <div class="draggable-box" id="skill-5">An toàn thông tin</div>
-        <div class="draggable-box" id="skill-6">Quản lý ngân sách</div>
-        <div class="draggable-box" id="skill-7">Xử lý ngôn ngữ</div>
+        <div class="draggable-box" id="item-1">Leaders Talk</div>
+        <div class="draggable-box" id="item-2">Hành trình Tân Thủ</div>
+        <div class="draggable-box" id="item-3">Botchat vận hành</div>
+        <div class="draggable-box" id="item-4">Field Sale Trainee</div>
+        <div class="draggable-box" id="item-5">Field Sale Leader</div>
+        <div class="draggable-box" id="item-6">Tuyển dụng và giữ chân nhân viên</div>
+        <div class="draggable-box" id="item-7">Performance Management</div>
+        <div class="draggable-box" id="item-8">Training Curriculumn</div>
+        <div class="draggable-box" id="item-9">New Onboarding Program</div>
     </div>
 
     <div class="matrix-wrapper">
@@ -136,7 +138,6 @@
                 $(element).draggable({
                     revert: "invalid", 
                     cursor: "move",
-                    // Tạo một bản sao để kéo (clone)
                     helper: function(event) {
                         return $(this).clone().css({'opacity': 0.8, 'z-index': 1000});
                     }
@@ -165,9 +166,7 @@
                         makeDraggable(newItem);
                     } else if (droppedItem.closest('.overlay-zone').length) {
                         // Nếu kéo từ zone khác sang zone này (di chuyển)
-                        // Lấy hộp gốc (vì ta đang kéo clone)
-                        var originalItem = ui.helper.data('original');
-                        if (!originalItem) originalItem = droppedItem; // Dùng chính nó nếu không có data
+                        var originalItem = ui.helper.data('original') || droppedItem;
                         
                         originalItem.appendTo(this).css({
                             'position': 'relative', 
@@ -189,9 +188,7 @@
                     
                     // Nếu hộp đang nằm trong khu vực 4 ô (overlay-zone), di chuyển nó về lại đây
                     if (droppedItem.closest('.overlay-zone').length) {
-                         // Lấy hộp gốc (vì ta đang kéo clone)
-                        var originalItem = ui.helper.data('original');
-                        if (!originalItem) originalItem = droppedItem; // Dùng chính nó nếu không có data
+                        var originalItem = ui.helper.data('original') || droppedItem;
                         
                         originalItem.appendTo(this).css({
                             'position': 'relative', 
@@ -211,7 +208,7 @@
                 }
             });
 
-            // Gán hộp gốc vào helper data khi kéo (chỉ cần thiết cho việc kéo giữa các zone)
+            // Gán hộp gốc vào helper data khi kéo 
              $(document).on('dragstart', '.draggable-box', function(event, ui) {
                 ui.helper.data('original', $(this));
             });
