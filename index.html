@@ -52,6 +52,7 @@
         }
 
         /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
+        /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
         .matrix-wrapper {
             /* Kích thước hiển thị: 900px x 636px (Giữ tỷ lệ 2245:1587) */
             width: 900px; 
@@ -66,9 +67,6 @@
 
         .overlay-zone {
             position: absolute;
-            /* Kích thước chung cho 4 ô */
-            width: 35.54%; 
-            height: 21.80%;
             padding: 5px;
             overflow: auto; 
             border: 2px dashed rgba(255, 255, 255, 0); 
@@ -76,25 +74,36 @@
             transition: border-color 0.2s; 
         }
         
-        /* CĂN CHỈNH CHÍNH XÁC 4 Ô DỰA TRÊN TỌA ĐỘ PIXEL BẠN CUNG CẤP */
+        /* CĂN CHỈNH CHÍNH XÁC Ô 1 (AI LITERACY) - Dữ liệu cũ */
         #zone-1 { 
-            left: 8.77%; 
-            top: 20.92%; 
+            left: 17.31%; 
+            top: 18.78%; 
+            width: 30.00%; 
+            height: 19.03%; 
         } 
         
+        /* CĂN CHỈNH CHÍNH XÁC Ô 2 (ONBOARDING AUTOMATIC) */
         #zone-2 { 
-            left: 44.32%; 
+            left: 54.00%; 
             top: 20.92%; 
+            width: 37.37%; 
+            height: 16.89%; 
         } 
         
+        /* CĂN CHỈNH CHÍNH XÁC Ô 3 (TECHNICAL SKILLS) */
         #zone-3 { 
-            left: 8.77%; 
-            top: 42.72%; 
+            left: 9.53%; 
+            top: 65.59%; 
+            width: 33.01%; 
+            height: 20.29%; 
         }
         
+        /* CĂN CHỈNH CHÍNH XÁC Ô 4 (MANAGERIAL SKILLS) */
         #zone-4 { 
-            left: 44.32%; 
-            top: 42.72%; 
+            left: 54.00%; 
+            top: 65.59%; 
+            width: 37.37%; 
+            height: 20.29%; 
         }
         
         /* HIỆU ỨNG KHI KÉO QUA */
