@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Drag and Drop Training Matrix - Sửa Lỗi Fill Đáp Án Cuối Cùng</title>
+    <title>Drag and Drop Training Matrix - Sửa Lỗi Kéo Thả Mobile</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script> 
     
     <style>
         body {
@@ -51,8 +53,11 @@
 
         /* ------------------------ KHU VỰC CHÍNH CHỨA ẢNH NỀN VÀ CÁC VÙNG THẢ ------------------------ */
         .matrix-wrapper {
-            width: 900px; 
-            height: 636px;
+            /* THÊM responsive design cho mobile (nếu cần) */
+            max-width: 900px; 
+            width: 100%;
+            padding-top: 70.51% ; /* Tỉ lệ 1587/2245 = 70.78% (636/900) */
+            height: 0;
             position: relative;
             background-image: url('background-matrix.png'); 
             background-size: cover; 
@@ -61,6 +66,13 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
         }
+        /* Cần điều chỉnh lại kích thước cho màn hình nhỏ hơn 900px */
+        @media (max-width: 920px) {
+            #draggable-items {
+                width: 95%;
+            }
+        }
+
 
         .overlay-zone {
             position: absolute;
@@ -71,7 +83,7 @@
             transition: border-color 0.2s; 
         }
         
-        /* CĂN CHỈNH CHÍNH XÁC 4 Ô */
+        /* CĂN CHỈNH CHÍNH XÁC 4 Ô (DÙNG %) */
         #zone-1 { left: 8.77%; top: 20.92%; width: 35.54%; height: 21.80%; } 
         #zone-2 { left: 54.00%; top: 20.92%; width: 37.37%; height: 16.89%; } 
         #zone-3 { left: 9.53%; top: 65.59%; width: 33.01%; height: 20.29%; }
@@ -169,16 +181,15 @@
             }
         }
         
-        // --- HÀM AUTO-FILL ĐÃ SỬA LỖI TÌM KIẾM HỘP GỐC ---
+        // --- HÀM AUTO-FILL ---
         function showAnswer() {
-            // 1. XÓA SẠCH: Loại bỏ TẤT CẢ các hộp hiện có trong 4 ô
+            // 1. XÓA SẠCH
             $('.overlay-zone .draggable-box').remove();
             
             // 2. Lặp qua ma trận đáp án và fill
             for (const itemId in correctAnswers) {
                 const targetZones = correctAnswers[itemId];
                 
-                // Lấy hộp gốc từ #draggable-items bằng ID và đảm bảo đó là hộp gốc
                 const originalItem = $('#' + itemId + '[data-original="true"]'); 
 
                 if (originalItem.length) {
@@ -187,8 +198,8 @@
                         
                         // CLONE hộp gốc
                         const newItem = originalItem.clone()
-                            .removeAttr('id') // Loại bỏ ID để tránh xung đột
-                            .attr('data-cloned', 'true') // Đánh dấu là clone
+                            .removeAttr('id') // Loại bỏ ID
+                            .attr('data-cloned', 'true')
                             .css({
                                 'position': 'relative', 
                                 'top': 'auto',
@@ -271,7 +282,7 @@
                 }
             });
 
-            // 4. Logic cho NÚT ĐÁP ÁN (GỌI HÀM AUTO-FILL)
+            // 4. Logic cho NÚT ĐÁP ÁN
             $('#show-answer-btn').on('click', showAnswer);
 
             // Gán hộp gốc vào helper data khi kéo
